@@ -20,8 +20,7 @@ namespace EasyMicroservices.Compression.Providers
             stream.Seek(0, SeekOrigin.Begin);
             using var gzipStream = new GZipStream(stream, CompressionMode.Compress);
             await gzipStream.WriteAsync(bytes, 0, bytes.Length);
-            await gzipStream.FlushAsync();
-            await stream.FlushAsync();
+            gzipStream.Close();
             return stream.ToArray();
         }
     }

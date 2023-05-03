@@ -48,9 +48,9 @@ namespace EasyMicroservices.Compression.Providers
         /// </summary>
         /// <param name="stream">stream to compress</param>
         /// <returns></returns>
-        public Task<byte[]> Compress(Stream stream)
+        public async Task<byte[]> Compress(Stream stream)
         {
-            return stream.StreamToBytesAsync(stream.Length, BufferSize);
+            return await Compress(await stream.StreamToBytesAsync(stream.Length, BufferSize));
         }
         /// <summary>
         /// compress a text
@@ -70,7 +70,8 @@ namespace EasyMicroservices.Compression.Providers
         /// <returns></returns>
         public async Task CompressToStream(byte[] bytes, Stream streamWriter)
         {
-            await streamWriter.WriteAsync(await Compress(bytes), 0, bytes.Length);
+            var compressed = await Compress(bytes);
+            await streamWriter.WriteAsync(compressed, 0, compressed.Length);
         }
         /// <summary>
         /// compress bytes
