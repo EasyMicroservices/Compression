@@ -1,5 +1,6 @@
 ﻿using EasyMicroservices.Compression.Interfaces;
 using EasyMicroservices.Utilities.IO;
+using EasyMicroservices.Utilities.IO.Interfaces;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,9 +13,22 @@ namespace EasyMicroservices.Compression.Providers
     public abstract class BaseCompressionProvider : ICompressionProvider
     {
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_innerStreamMiddleware"></param>
+        public BaseCompressionProvider(IStreamMiddleware _innerStreamMiddleware = default)
+        {
+            InnerStreamMiddleware = _innerStreamMiddleware;
+        }
+
+        /// <summary>
         /// buffer to read stream
         /// </summary>
         public static int BufferSize { get; set; } = 1024 * 1024 * 2;
+        /// <summary>
+        /// 
+        /// </summary>
+        public IStreamMiddleware InnerStreamMiddleware { get; set; }
 
         /// <summary>
         /// compress a text
@@ -94,5 +108,11 @@ namespace EasyMicroservices.Compression.Providers
         {
             return CompressToStream(encoding.GetBytes(text), streamWriter);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        public abstract Task<Stream> GetStream(Stream stream);
     }
 }

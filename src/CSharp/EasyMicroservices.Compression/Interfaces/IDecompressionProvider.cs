@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using EasyMicroservices.Utilities.IO.Interfaces;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -7,7 +8,7 @@ namespace EasyMicroservices.Compression.Interfaces
     /// <summary>
     /// Decompression usage interface provider
     /// </summary>
-    public interface IDecompressionProvider
+    public interface IDecompressionProvider : IStreamMiddleware
     {
         /// <summary>
         /// Decompress to text
