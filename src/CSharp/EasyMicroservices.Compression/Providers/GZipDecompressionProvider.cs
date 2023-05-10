@@ -1,6 +1,7 @@
-﻿using System;
-using System.IO.Compression;
+﻿using EasyMicroservices.Compression.IO;
+using EasyMicroservices.Utilities.IO.Interfaces;
 using System.IO;
+using System.IO.Compression;
 using System.Threading.Tasks;
 
 namespace EasyMicroservices.Compression.Providers
@@ -11,6 +12,13 @@ namespace EasyMicroservices.Compression.Providers
     public class GZipDecompressionProvider : BaseDecompressionProvider
     {
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_innerStreamMiddleware"></param>
+        public GZipDecompressionProvider(IStreamMiddleware _innerStreamMiddleware = default) : base(_innerStreamMiddleware)
+        {
+        }
+        /// <summary>
         /// decompress bytes
         /// </summary>
         /// <param name="bytes">bytes to decompress</param>
@@ -19,9 +27,18 @@ namespace EasyMicroservices.Compression.Providers
         {
             using var compressedStream = new MemoryStream(bytes);
             using var stream = new MemoryStream();
-            using var gzipStream = new GZipStream(compressedStream, CompressionMode.Decompress);
-            await gzipStream.CopyToAsync(stream);
+            using var newStream = await GetStream(compressedStream);
+            await newStream.CopyToAsync(stream);
             return stream.ToArray();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        public override Task<Stream> GetStream(Stream stream)
+        {
+            return InnerGZipStream.GetStream(stream, InnerStreamMiddleware);
         }
     }
 }

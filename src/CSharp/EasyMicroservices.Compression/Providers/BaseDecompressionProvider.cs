@@ -1,5 +1,6 @@
 ﻿using EasyMicroservices.Compression.Interfaces;
 using EasyMicroservices.Utilities.IO;
+using EasyMicroservices.Utilities.IO.Interfaces;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,9 +13,21 @@ namespace EasyMicroservices.Compression.Providers
     public abstract class BaseDecompressionProvider : IDecompressionProvider
     {
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_innerStreamMiddleware"></param>
+        public BaseDecompressionProvider(IStreamMiddleware _innerStreamMiddleware = default)
+        {
+            InnerStreamMiddleware = _innerStreamMiddleware;
+        }
+        /// <summary>
         /// buffer to read stream
         /// </summary>
         public static int BufferSize { get; set; } = 1024 * 1024 * 2;
+        /// <summary>
+        /// 
+        /// </summary>
+        public IStreamMiddleware InnerStreamMiddleware { get; set; }
 
         /// <summary>
         /// Decompress to text
@@ -60,5 +73,11 @@ namespace EasyMicroservices.Compression.Providers
         {
             return new MemoryStream(await Decompress(bytes));
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        public abstract Task<Stream> GetStream(Stream stream);
     }
 }
